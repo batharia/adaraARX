@@ -2,13 +2,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>ARXAPI</groupId>
   <artifactId>ARXAPI</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>war</packaging>
-  <name>adaraARX</name>
+  <name>ARXAPI</name>
 <properties> 
 <!--basedir>/home/calsoft/eclipse-workspace/ARXAPI/</basedir-->
 </properties>
   <build>
+<finalName>ARXAPI</finalName>
     <resources>
       <resource>
         <directory>src/main/resource</directory>
@@ -37,7 +38,9 @@
           <warSourceDirectory>WebContent</warSourceDirectory>
         </configuration>
       </plugin>
+   
     </plugins>
+
 </build>
 <dependencies>
 
