@@ -1,0 +1,44 @@
+
+TO generte Token
+
+export token=`curl -X POST -H "X-OpenAM-Username: demo" -H "X-OpenAM-Password: demo1234" http://localhost:8081/openam/json/authenticate |grep tokenId|sed 's/^.*tokenId"://'|sed 's/,.*$//'|xargs echo`
+
+1) UnMasking with DBURl
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+Negative testcase -wrong token 
+2) UnMasking with DBURl , with filter
+curl -X POST -H "X-OpenAM-Token: $token" -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&filterAttributes=Name,State" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+Negative testcase - wrong filter name attributes
+
+
+3) UnMasking   with dburl ,with filter ,  With Delegation 
+
+curl -X POST -H "X-OpenAM-Token: $token" -H "X-Effective-User:amit"   -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&filterAttributes=Name,State" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+Negative use cases- wrong delgator
+curl -X POST -H "X-OpenAM-Token: $token" -H "X-Effective-User:amit1"   -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&filterAttributes=Name,State" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+4)UnMasking  with bucket name , no filter , no password
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "bucketName=MaskingBucket&docID=9" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+
+5)UnMasking  with bucket name , with filter , No password
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "bucketName=MaskingBucket&docID=9&filterAttributes=Name" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+6)UnMasking  with bucket name , with filter , with password
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "bucketName=MaskingBucket1&bucketPassword=test123&docID=9&filterAttributes=Name" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+negative Testcases- wrong password/bucketname
+
+7)UnMasking  with bucket name , with filter , with password , with delegation
+
+curl -X POST -H "X-OpenAM-Token: $token" -H "X-Effective-User:amit"   -d "bucketName=MaskingBucket1&bucketPassword=test123&docID=9&filterAttributes=Name" http://localhost:8080/ARXAPI/user/UnMaskingAPI
+
+negative testcase - wrong delegator
+

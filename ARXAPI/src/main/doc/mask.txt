@@ -1,0 +1,47 @@
+
+
+TO generte Token
+
+export token=`curl -X POST -H "X-OpenAM-Username: demo" -H "X-OpenAM-Password: demo1234" http://localhost:8081/openam/json/authenticate |grep tokenId|sed 's/^.*tokenId"://'|sed 's/,.*$//'|xargs echo`
+
+1) Masking with DBURl
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&maskinglevel=2,1" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+Negative testcase -wrong token , no masking level
+2) Masking with DBURl , with filter
+curl -X POST -H "X-OpenAM-Token: $token" -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&maskinglevel=2,1&filterAttributes=Name,State" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+Negative testcase - wrong filter name attributes
+
+
+3) Masking   with dburl ,with filter ,  With Delegation 
+
+curl -X POST -H "X-OpenAM-Token: $token" -H "X-Effective-User:amit"   -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&maskinglevel=2,1&filterAttributes=Name,State" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+Negative use cases- wrong delgator
+curl -X POST -H "X-OpenAM-Token: $token" -H "X-Effective-User:amit1"   -d "dburl=http://localhost:8091/pools/default/buckets/MaskingBucket/docs/9&maskinglevel=2,1&filterAttributes=Name,State" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+4)Masking  with bucket name , no filter , no password
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "bucketName=MaskingBucket&docID=9&maskinglevel=-3" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+
+5)Masking  with bucket name , with filter , No password
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "bucketName=MaskingBucket&docID=9&maskinglevel=-3&filterAttributes=Name" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+6)Masking  with bucket name , with filter , with password
+
+curl -X POST -H "X-OpenAM-Token: $token" -d "bucketName=MaskingBucket1&bucketPassword=test123&docID=9&maskinglevel=-3&filterAttributes=Name" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+negative Testcases- wrong password/bucketname
+
+7)Masking  with bucket name , with filter , with password , with delegation
+
+curl -X POST -H "X-OpenAM-Token: $token" -H "X-Effective-User:amit"   -d "bucketName=MaskingBucket1&bucketPassword=test123&docID=9&maskinglevel=-3&filterAttributes=Name" http://localhost:8080/ARXAPI/user/MaskingAPI
+
+negative testcase - wrong delegator
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
